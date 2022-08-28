@@ -41,13 +41,16 @@ public class FetchCustomerRecursiveTask extends RecursiveTask<List<CustomerWithT
         FetchCustomerRecursiveTask leftSide = new FetchCustomerRecursiveTask(customerIds.subList(0, listMiddle));
         FetchCustomerRecursiveTask rightSide = new FetchCustomerRecursiveTask(
                 customerIds.subList(listMiddle, listSize));
+
         log.info("Forking subtask...");
         leftSide.fork();
         rightSide.fork();
 
         log.info("Extracting the result from subtasks...");
         List<CustomerWithTotalAmountSpend> leftSideResult = leftSide.join();
+        log.info("LeftSideResult size {}", leftSideResult.size());
         List<CustomerWithTotalAmountSpend> rightSideResult = rightSide.join();
+        log.info("RightSideResult size {}", rightSideResult.size());
 
         log.info("Combining results from subtasks and returning it...");
         return Stream.of(leftSideResult, rightSideResult)
